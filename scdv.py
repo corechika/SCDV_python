@@ -18,11 +18,11 @@ class SCDV(object):
         return word_vec
 
     # 出現頻度の数え上げ(1単語は1データに1回)
-    def count_freq(self, words):
+    def count_freq(self, words, sep=','):
         frequency = defaultdict(int)
         for i, word in enumerate(words):
             word_list = []
-            for token in word.split(','):
+            for token in word.split(sep):
                 if token in word_list:
                     continue
                 frequency[token] += 1
@@ -66,6 +66,8 @@ if __name__ == '__main__':
     scdv = SCDV()
     
     # data
+    path = './dogura_magura.csv'
+    scdv_column = 'parsed'
     words = pd.read_csv(path)[scdv_column].values
 
     # 単語頻度
