@@ -5,19 +5,20 @@ import scipy as sp
 from collections import defaultdict
 from sklearn.mixture import GaussianMixture
 
-class SCDV:
+class SCDV(object):
     # モデルを使って言葉のベクトルを取得 .binバージョン
-    def get_word_vector(words, vec_size):
+    def get_word_vector(self, words, vec_size):
         word_vec = defaultdict(list)
         for word in words:
-            try:
+            if word_vec.get(word):
                 word_vec[word].append(model[word])
-            except:
+            else:
                 word_vec[word].append(np.zeros(vec_size, ))
+                
         return word_vec
 
     # 出現頻度の数え上げ(1単語は1データに1回)
-    def count_freq(words):
+    def count_freq(self, words):
         frequency = defaultdict(int)
         for i, word in enumerate(words):
             word_list = []
@@ -29,18 +30,18 @@ class SCDV:
         return frequency
 
     # IDFの計算
-    def calc_idf(n, word_freq):
+    def calc_idf(self, n, word_freq):
         return np.log2(n / word_freq) + 1.0
 
     # GMM
-    def training_GMM(wv, n_cluster, vec_size):
+    def training_GMM(self, wv, n_cluster, vec_size):
         x = [vec[0].reshape(1, vec_size)[0] for word, vec in wv.items() if not np.all(vec[0] == 0)]
 
         gmm = GaussianMixture(n_components=n_cluster, covariance_type='tied')
         gmm.fit(np.array(x))
         return gmm
 
-    def calc_scdv(words, cluseter=5, vec_size=200, sep=',', gmm):
+    def calc_scdv(self, words, cluseter=5, vec_size=200, sep=',', gmm):
         # SCDV計算
         sentence_vec = []
         for row in words:
