@@ -10,10 +10,11 @@ class SCDV(object):
     def get_word_vector(self, words, vec_size):
         word_vec = defaultdict(list)
         for word in words:
-            try:
+            if word_vec.get(word):
                 word_vec[word].append(model[word])
-            except:
+            else:
                 word_vec[word].append(np.zeros(vec_size, ))
+                
         return word_vec
 
     # 出現頻度の数え上げ(1単語は1データに1回)
