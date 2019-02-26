@@ -5,7 +5,7 @@ import scipy as sp
 from collections import defaultdict
 from sklearn.mixture import GaussianMixture
 
-class SCDV:
+class SCDV(object):
     # モデルを使って言葉のベクトルを取得 .binバージョン
     def get_word_vector(words, vec_size):
         word_vec = defaultdict(list)
