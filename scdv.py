@@ -7,7 +7,7 @@ from sklearn.mixture import GaussianMixture
 
 class SCDV(object):
     # モデルを使って言葉のベクトルを取得 .binバージョン
-    def get_word_vector(self, words, vec_size):
+    def get_word_vector(self, words, vec_size, model):
         word_vec = defaultdict(list)
         for word in words:
             if word_vec.get(word):
@@ -23,8 +23,7 @@ class SCDV(object):
         for i, word in enumerate(words):
             word_list = []
             for token in word.split(sep):
-                if token in word_list:
-                    continue
+                if token in word_list: continue
                 frequency[token] += 1
                 word_list.append(token)
         return frequency
@@ -41,7 +40,7 @@ class SCDV(object):
         gmm.fit(np.array(x))
         return gmm
 
-    def calc_scdv(self, words, cluseter=5, vec_size=200, sep=',', gmm):
+    def calc_scdv(self, words, cluseter=5, vec_size=200, sep=',', gmm, n):
         # SCDV計算
         sentence_vec = []
         for row in words:
@@ -49,7 +48,7 @@ class SCDV(object):
             for word in row.split(sep):
                 if np.all(wv[word] == 0): continue
                 # idf
-                idf = calc_idf(N, freq[word])
+                idf = calc_idf(n, freq[word])
                 # wcv_ik
                 wcv_ik = [prob * wv[word][0] for prob in gmm.predict_proba(wv[word])[0]]
                 # wtv_i
@@ -82,7 +81,7 @@ if __name__ == '__main__':
     print('vector length:{0}'.format(vec_size))
 
     # word vectorを取得
-    wv = scdv.get_word_vector(freq.keys(), vec_size)
+    wv = scdv.get_word_vector(freq.keys(), vec_size, model)
 
     # モデルの削除
     del model
@@ -92,4 +91,4 @@ if __name__ == '__main__':
     gmm = csdv.training_GMM(wv, n_cluster=cluster, vec_size=vec_size)
     
     #scdv
-    scdv = scdv.calc_scdv(words, cluseter, vec_size, sep=',', gmm)
+    scdv = scdv.calc_scdv(words, cluseter, vec_size, sep=',', gmm, N)
