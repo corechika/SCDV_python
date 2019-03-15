@@ -88,7 +88,7 @@ if __name__ == '__main__':
     
     # GMM
     cluster = 5
-    gmm = csdv.training_GMM(wv, n_cluster=cluster, vec_size=vec_size)
+    gmm = scdv.training_GMM(wv, n_cluster=cluster, vec_size=vec_size)
     
     #scdv
     scdv = scdv.calc_scdv(words, gmm, N, , cluseter, vec_size, sep=',')
