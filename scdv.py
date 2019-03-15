@@ -40,7 +40,7 @@ class SCDV(object):
         gmm.fit(np.array(x))
         return gmm
 
-    def calc_scdv(self, words, cluseter=5, vec_size=200, sep=',', gmm, n):
+    def calc_scdv(self, words, gmm, n, cluseter=5, vec_size=200, sep=','):
         # SCDV計算
         sentence_vec = []
         for row in words:
@@ -91,4 +91,4 @@ if __name__ == '__main__':
     gmm = csdv.training_GMM(wv, n_cluster=cluster, vec_size=vec_size)
     
     #scdv
-    scdv = scdv.calc_scdv(words, cluseter, vec_size, sep=',', gmm, N)
+    scdv = scdv.calc_scdv(words, gmm, N, , cluseter, vec_size, sep=',')
