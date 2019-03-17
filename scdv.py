@@ -7,14 +7,19 @@ from sklearn.mixture import GaussianMixture
 
 class SCDV(object):
     # モデルを使って言葉のベクトルを取得 .binバージョン
-    def get_word_vector(self, words, vec_size, model):
+    def get_word_vector(self, words, vec_size, model_path):
+        bin_flag = False
+        if 'bin' in model_path[-3:]:
+            bin_flag = True
+        model = gensim.models.KeyedVectors.load_word2vec_format(model_path, binary=bin_flag)
+
         word_vec = defaultdict(list)
         for word in words:
-            if word_vec.get(word):
+            try:
                 word_vec[word].append(model[word])
-            else:
+            except:
                 word_vec[word].append(np.zeros(vec_size, ))
-                
+
         return word_vec
 
     # 出現頻度の数え上げ(1単語は1データに1回)
