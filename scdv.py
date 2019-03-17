@@ -35,7 +35,7 @@ class SCDV(object):
 
     # IDFの計算
     def calc_idf(self, n, word_freq):
-        return np.log2(n / word_freq) + 1.0
+        return np.log2(n/word_freq) + 1.0
 
     # GMM
     def training_GMM(self, wv, n_cluster, vec_size):
@@ -45,7 +45,7 @@ class SCDV(object):
         gmm.fit(np.array(x))
         return gmm
 
-    def calc_scdv(self, words, gmm, n, cluseter=5, vec_size=200, sep=','):
+    def calc_scdv(self, words, gmm, n, wv, freq, cluster=5, vec_size=200, sep=','):
         # SCDV計算
         sentence_vec = []
         for row in words:
@@ -53,7 +53,7 @@ class SCDV(object):
             for word in row.split(sep):
                 if np.all(wv[word] == 0): continue
                 # idf
-                idf = calc_idf(n, freq[word])
+                idf = self.calc_idf(n, freq[word])
                 # wcv_ik
                 wcv_ik = [prob * wv[word][0] for prob in gmm.predict_proba(wv[word])[0]]
                 # wtv_i
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     N = len(words)
 
     # modelファイルの読み込み
-    model = gensim.models.KeyedVectors.load_word2vec_format('../fastText/build/model.vec', binary=False)
+    model_path = './entity_vector/entity_vector.model.bin'
 
     # modelのベクトルサイズ
     vec_size = model.vector_size
@@ -96,4 +96,4 @@ if __name__ == '__main__':
     gmm = scdv.training_GMM(wv, n_cluster=cluster, vec_size=vec_size)
     
     #scdv
-    scdv = scdv.calc_scdv(words, gmm, N, , cluseter, vec_size, sep=',')
+    sentence_vectors = scdv.calc_scdv(words, gmm, N, wv, freq, cluster, vec_size, sep=',')
