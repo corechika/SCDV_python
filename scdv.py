@@ -6,13 +6,15 @@ from collections import defaultdict
 from sklearn.mixture import GaussianMixture
 
 class SCDV(object):
-    # モデルを使って言葉のベクトルを取得 .binバージョン
-    def get_word_vector(self, words, vec_size, model_path):
+    # load word2vec model
+    def load_w2v_model(self, model_path):
         bin_flag = False
         if 'bin' in model_path[-3:]:
             bin_flag = True
-        model = gensim.models.KeyedVectors.load_word2vec_format(model_path, binary=bin_flag)
+        return gensim.models.KeyedVectors.load_word2vec_format(model_path, binary=bin_flag)
 
+    # モデルを使って言葉のベクトルを取得 .binバージョン
+    def get_word_vector(self, words, vec_size, model_path):
         word_vec = defaultdict(list)
         for word in words:
             try:
@@ -80,6 +82,7 @@ if __name__ == '__main__':
 
     # modelファイルの読み込み
     model_path = './entity_vector/entity_vector.model.bin'
+    model = scdv.load_w2v_model(model_path)
 
     # modelのベクトルサイズ
     vec_size = model.vector_size
