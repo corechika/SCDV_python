@@ -63,9 +63,9 @@ class SCDV(object):
                 if len(wcv_ik) > 2:
                     for wcv in wcv_ik[2:]:
                         con = np.concatenate((con, wcv))
-                wtv_i = con * idf * weight
+                wtv_i = con * idf * float(weight)
                 wtv += wtv_i
-            sentence_vec.append(wtv/len(row.split(sep)))
+            sentence_vec.append(wtv/len(word_row.split(sep)))
         return sentence_vec
 
 if __name__ == '__main__':
