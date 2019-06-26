@@ -47,12 +47,12 @@ class SCDV(object):
         gmm.fit(np.array(x))
         return gmm
 
-    def calc_scdv(self, words, gmm, n, wv, freq, cluster=5, vec_size=200, sep=','):
+    def calc_scdv(self, words, weights, gmm, n, wv, freq, cluster=5, vec_size=200, sep=','):
         # SCDV計算
         sentence_vec = []
-        for row in words:
+        for word_row, weight_row in zip(words, weights):
             wtv = np.zeros(cluster*vec_size, )
-            for word in row.split(sep):
+            for word, weight in zip(word_row.split(sep), weight_row.split(sep)):
                 if np.all(wv[word] == 0): continue
                 # idf
                 idf = self.calc_idf(n, freq[word])
@@ -63,7 +63,7 @@ class SCDV(object):
                 if len(wcv_ik) > 2:
                     for wcv in wcv_ik[2:]:
                         con = np.concatenate((con, wcv))
-                wtv_i = con * idf
+                wtv_i = con * idf * weight
                 wtv += wtv_i
             sentence_vec.append(wtv/len(row.split(sep)))
         return sentence_vec
@@ -74,10 +74,12 @@ if __name__ == '__main__':
     # data
     path = './dogura_magura.csv'
     scdv_column = 'parsed'
-    words = pd.read_csv(path)[scdv_column].values
+    df = pd.read_csv(path)
+    words = df[scdv_column].values
+    weights = df['weight'].values
 
     # 単語頻度
-    freq = scdv.count_freq(words)
+    freq = scdv.count_freq(str(words))
     N = len(words)
 
     # modelファイルの読み込み
@@ -99,4 +101,4 @@ if __name__ == '__main__':
     gmm = scdv.training_GMM(wv, n_cluster=cluster, vec_size=vec_size)
     
     #scdv
-    sentence_vectors = scdv.calc_scdv(words, gmm, N, wv, freq, cluster, vec_size, sep=',')
+    sentence_vectors = scdv.calc_scdv(words, weights, gmm, N, wv, freq, cluster, vec_size, sep=',')
